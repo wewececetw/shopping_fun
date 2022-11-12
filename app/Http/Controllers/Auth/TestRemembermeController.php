@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Models\User;
+use Illuminate\Support\Facades\Hash;
 
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
@@ -27,6 +29,7 @@ class TestRemembermeController extends Controller
             'phone' => 'required|numeric|min:10',
             'address' => 'required',
         ]);
+        
         if($request->password == $request->repassword){
             
             $usersignup = new User;
@@ -36,13 +39,14 @@ class TestRemembermeController extends Controller
             $usersignup->phone = $request->phone;
             $usersignup->address = $request->address;
             $usersignup->save();
-            return redirect('/');
+            $data["success"] = true;
 
         }else{
-            return redirect('/')->with('pwderror', '帳密錯誤!');;
+            $data["error"] = true;
+
 
         }
-        
+        return response()->json($data);
 
     }
 

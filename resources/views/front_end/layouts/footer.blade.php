@@ -20,7 +20,10 @@
 
     <link rel="stylesheet" href="{{ asset('css/custom.css') }}" type="text/css" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-
+    <link rel="stylesheet" href="{{ asset('css/custom.css') }}" type="text/css" />
+    <link rel="stylesheet" href="{{ asset('css/app.css') }}" type="text/css" />
+    <script src="{{ mix('/js/app.js') }}"></script>
+       
     <!-- SLIDER REVOLUTION 5.x CSS SETTINGS -->
     <link rel="stylesheet" type="text/css" href="{{ asset('include/rs-plugin/css/settings.css') }}" media="screen" />
     <link rel="stylesheet" type="text/css" href="{{ asset('include/rs-plugin/css/layers.css') }}">
@@ -1074,7 +1077,7 @@
                         enable: true,
                         hide_onmobile: false,
                         hide_onleave: false,
-                        tmp: `<div class="tp-title-wrap">	<span class="tp-arr-titleholder">@{{ title }}</span> </div>`,
+                        tmp: "<div class='tp-title-wrap'>	<span class='tp-arr-titleholder'>"+" <?php   $str1 = chr(123).chr(123); echo (string) $str1;?>" +"title"+ "<?php $str2 = chr(125).chr(125); echo (string) $str2;?>" +" </span> </div>",
                         left: {
                             h_align: "left",
                             v_align: "center",

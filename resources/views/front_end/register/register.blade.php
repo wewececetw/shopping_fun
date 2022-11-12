@@ -88,47 +88,57 @@ if(isset($_COOKIE['login_email']) && isset($_COOKIE['login_pass']))
                     </div>
                 </div>
                 <div class="accordion-content clearfix">
-                    <form id="register-form" name="register-form" class="row mb-0" action="{{route('post.register')}}" method="post">
+                    <form id="register-form" name="register-form" class="row mb-0" >
+                        @csrf
                         <div class="col-12 form-group">
                             <label for="register-form-name">Name:</label>
-                            <input type="text" id="register-form-name" name="name" value="{{old('name')}}"
+                            <input type="text" id="register-form-name" name="name" value="<?=$_GET["name"]?>"
                                 class="form-control" />
+                        
                         </div>
 
                         <div class="col-12 form-group">
                             <label for="register-form-email">Email Address:</label>
-                            <input type="text" id="register-form-email" name="email" value="{{old('email')}}"
+                            <input type="text" id="register-form-email" name="email" value="<?=$_GET["email"]?>"
                                 class="form-control" />
+                              
                         </div>
 
                         <div class="col-12 form-group">
                             <label for="register-form-address">Address:</label>
-                            <input type="text" id="register-form-username" name="address" value="{{old('address')}}"
+                            <input type="text" id="register-form-username" name="address" value="<?=$_GET["address"]?>"
                                 class="form-control" />
+                             
                         </div>
 
                         <div class="col-12 form-group">
                             <label for="register-form-phone">Phone:</label>
-                            <input type="text" id="register-form-phone" name="phone" value="{{old('phone')}}"
+                            <input type="text" id="register-form-phone" name="phone" value="<?=$_GET["phone"]?>"
                                 class="form-control" />
+                                
                         </div>
 
                         <div class="col-12 form-group">
                             <label for="register-form-password">Choose Password:</label>
                             <input type="password" id="register-form-password" name="password" value=""
                                 class="form-control" />
+                               
                         </div>
 
                         <div class="col-12 form-group">
                             <label for="register-form-repassword">Re-enter Password:</label>
                             <input type="password" id="register-form-repassword" name="repassword"
                                 value="" class="form-control" />
+                                  
                         </div>
+                        <div id="form-errors">
 
+                        </div>
                         <div class="col-12 form-group">
-                            <button class="button button-3d button-black m-0" id="register-form-submit"
+                            <button class="button button-3d button-black m-0" id="register-form-submit" type="button"
                                 name="register-form-submit" onclick="checkpwd()" value="register">Register Now</button>
                         </div>
+
                     </form>
                 </div>
 
@@ -152,8 +162,69 @@ if(isset($_COOKIE['login_email']) && isset($_COOKIE['login_pass']))
         }
     });
     function checkpwd(){
-        if($('#register-form-password').val() == $('#register-form-repassword').val()){
+        if($('#register-form-password').val() != $('#register-form-repassword').val()){
+            Swal.fire({
+                icon: 'error',
+                title: '密碼不符',
+                text: '密碼與二次輸入密碼不符!',
+                footer: '<a href="">有疑問嗎?可以通知管理者!</a>'
+            })
             
+        }
+        else
+        {
+            $.ajax({
+                url:"{{route('post.register')}}",
+                method: "POST" ,
+                dataType: "JSON",
+                headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+                data: $("#register-form").serializeArray(),
+                
+                success:function(res){
+                    if(res.success)
+                    {
+                        Swal.fire({
+                                position: 'top-end',
+                                icon: 'success',
+                                title: '註冊成功',
+                                showConfirmButton: false,
+                                timer: 1500 }); 
+                        location.href = "/";        
+                    }
+                    else
+                    {
+                        Swal.fire({
+                        icon: 'error',
+                        title: '系統錯誤',
+                        text: '請通知管理人員!',
+                        footer: '<a href="">有疑問嗎?可以通知管理者!</a>'
+                        })    
+                    }
+                    
+                },
+                error:function(err){
+                     // Something went wrong
+                // HERE you can handle asynchronously the response 
+
+                // Log in the console
+                var errors = err.responseJSON;
+                console.log(errors);
+
+                // or, what you are trying to achieve
+                // render the response via js, pushing the error in your 
+                // blade page
+                 errorsHtml = '<div class="alert alert-danger"><ul>';
+
+                 $.each( errors.errors, function( key, value ) {
+                      errorsHtml += '<li>'+ value[0] + '</li>'; //showing only the first error.
+                 });
+                 errorsHtml += '</ul></div>';
+
+                 $( '#form-errors' ).html( errorsHtml ); //appending to a <div id="form-errors"></div> inside form  
+                
+                
+                    },
+                });
         }
     }
 </script>
